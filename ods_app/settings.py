@@ -5,18 +5,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-gizli-anahtar')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,ods.onrender.com').split(',')
 
 # Security settings for production
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    # Check if we're behind a proxy/load balancer that sets HTTPS headers
+    if os.environ.get('RENDER') == 'true' or 'https' in os.environ.get('REQUEST_SCHEME', '').lower():
+        SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = os.environ.get('RENDER') == 'true'  # Only secure cookies on Render
+    CSRF_COOKIE_SECURE = os.environ.get('RENDER') == 'true'     # Only secure CSRF on Render
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+    if os.environ.get('RENDER') == 'true':
+        SECURE_HSTS_SECONDS = 31536000  # 1 year
+        SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+        SECURE_HSTS_PRELOAD = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
