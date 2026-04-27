@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Excel'den Soru Yükle</title>
+</head>
+<body>
+    <h1>Excel'den Soru Yükle</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Yükle</button>
+    </form>
+    <p><strong>Excel Formatı:</strong> İlk satır başlık, sonraki satırlar: Soru Metni, Soru Tipi (MCQ/FILL/ESSAY), A Şıkkı, B Şıkkı, C Şıkkı, D Şıkkı, E Şıkkı, Doğru Cevap, Puan, (isteğe bağlı) Ek Seçenekler...</p>
+    <a href="/admin/ods_app/sinav/">Geri Dön</a>
+</body>
+</html>

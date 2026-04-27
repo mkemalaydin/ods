@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ sinav.ad }}</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --primary: #1d4ed8;
+            --accent: #0ea5e9;
+            --success: #16a34a;
+            --text: #111827;
+            --muted: #475569;
+            --border: #e2e8f0;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
+            color: var(--text);
+        }
+        .page {
+            width: min(1080px, 100%);
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        .topbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .topbar h1 {
+            margin: 0;
+            font-size: clamp(2rem, 2.3vw, 2.6rem);
+            line-height: 1.05;
+        }
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 0.98rem;
+        }
+        .badge {
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.14);
+            color: #0369a1;
+            font-weight: 700;
+        }
+        .timer-card {
+            padding: 20px 24px;
+            border-radius: 26px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.05);
+            display: inline-flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .timer-card span {
+            font-size: 1.05rem;
+            color: var(--muted);
+        }
+        .timer-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        form {
+            display: grid;
+            gap: 22px;
+        }
+        .soru {
+            padding: 24px;
+            border-radius: 26px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.05);
+        }
+        .soru-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .soru-header h2 {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+        .soru-meta {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+        label.option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        label.option:hover {
+            transform: translateY(-1px);
+            border-color: #93c5fd;
+        }
+        label.option input {
+            accent-color: var(--primary);
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 1rem;
+            color: var(--text);
+            background: #f8fafc;
+            resize: vertical;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+        }
+        button {
+            width: fit-content;
+            min-width: 180px;
+            border: none;
+            border-radius: 18px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 18px 34px rgba(14, 165, 233, 0.22);
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .footer-link {
+            margin-top: 18px;
+            display: inline-flex;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .footer-link:hover { text-decoration: underline; }
+    </style>
+    <script>
+        let timeLeft = {{ sinav.sure }} * 60;
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            if (timeLeft <= 0) {
+                document.getElementById('sinavForm').submit();
+            } else {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+        window.onload = updateTimer;
+    </script>
+</head>
+<body>
+    <main class="page">
+        <div class="topbar">
+            <div>
+                <h1>{{ sinav.ad }}</h1>
+                <div class="meta">Öğrenci No: {{ ogrenci_no }} · Sınav süresi: {{ sinav.sure }} dakika</div>
+            </div>
+            <div class="timer-card">
+                <span>Kalan Süre</span>
+                <span class="timer-value" id="timer"></span>
+            </div>
+        </div>
+        <form id="sinavForm" method="post">
+            {% csrf_token %}
+            {% for soru in sorular %}
+                <section class="soru">
+                    <div class="soru-header">
+                        <h2>{{ forloop.counter }}. {{ soru.metin }}</h2>
+                        <span class="soru-meta">{{ soru.puan_degeri }} puan</span>
+                    </div>
+                    <div class="options">
+                        {% if soru.is_mcq %}
+                            {% for label, text in soru.secenekler %}
+                                <label class="option">
+                                    <input type="radio" name="soru_{{ soru.id }}" value="{{ label }}">
+                                    <span>{{ label }}) {{ text }}</span>
+                                </label>
+                            {% endfor %}
+                        {% elif soru.is_filled %}
+                            <input type="text" name="soru_{{ soru.id }}" placeholder="Cevabınızı yazın">
+                        {% elif soru.is_essay %}
+                            <textarea name="soru_{{ soru.id }}" rows="6" placeholder="Cevabınızı detaylı olarak yazın"></textarea>
+                        {% endif %}
+                    </div>
+                </section>
+            {% endfor %}
+            <button type="submit">Sınavı Bitir</button>
+        </form>
+        <a class="footer-link" href="{% url 'cikis' %}">Geri Dön / Çıkış Yap</a>
+    </main>
+</body>
+</html>

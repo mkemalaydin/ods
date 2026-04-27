@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Sınav Listesi</title>
+    <style>
+        :root {
+            --bg: #eef2ff;
+            --surface: #ffffff;
+            --primary: #3730a3;
+            --primary-soft: #c7d2fe;
+            --accent: #0ea5e9;
+            --success: #16a34a;
+            --text: #111827;
+            --muted: #4b5563;
+            --border: #e5e7eb;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 32%),
+                        linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+            color: var(--text);
+        }
+        .container {
+            width: min(1080px, 100%);
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .title-block {
+            max-width: 720px;
+        }
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 2.4vw, 2.8rem);
+            line-height: 1.05;
+        }
+        .subtitle {
+            margin: 12px 0 0;
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: .02em;
+        }
+        .card {
+            display: grid;
+            gap: 18px;
+            margin-top: 20px;
+        }
+        .exam-card {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 24px;
+            border-radius: 26px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.06);
+        }
+        .exam-info {
+            min-width: 180px;
+            max-width: 65%;
+        }
+        .exam-info h2 {
+            margin: 0;
+            font-size: 1.15rem;
+            color: var(--text);
+        }
+        .exam-meta {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 0.96rem;
+        }
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 140px;
+            padding: 14px 20px;
+            border-radius: 18px;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            box-shadow: 0 16px 26px rgba(59, 130, 246, 0.2);
+            transition: transform 0.2s ease;
+        }
+        .cta:hover {
+            transform: translateY(-2px);
+        }
+        .message {
+            padding: 16px 18px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .empty-state {
+            padding: 24px;
+            border-radius: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+        .logout {
+            margin-top: 24px;
+            display: inline-flex;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .logout:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div class="header">
+            <div class="title-block">
+                <h1>Hoş Geldin</h1>
+                <p class="subtitle">Öğrenci numaran {{ ogrenci_no }}. Aktif sınavlara hızlıca başla, sonuçların otomatik kaydedilecek.</p>
+            </div>
+            <span class="badge">Aktif Sınavlar</span>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if sinavlar %}
+            <section class="card">
+                {% for sinav in sinavlar %}
+                    <article class="exam-card">
+                        <div class="exam-info">
+                            <h2>{{ sinav.ad }}</h2>
+                            <p class="exam-meta">Süre: {{ sinav.sure }} dakika · Başlangıç: {{ sinav.baslangic_tarihi|date:'d M Y H:i' }}</p>
+                        </div>
+                        <a class="cta" href="{% url 'sinav_katil' sinav.id %}">Sınava Katıl</a>
+                    </article>
+                {% endfor %}
+            </section>
+        {% else %}
+            <div class="empty-state">
+                <p>Şu anda katılabileceğin aktif sınav bulunmuyor. Lütfen daha sonra tekrar dene.</p>
+            </div>
+        {% endif %}
+
+        <a class="logout" href="{% url 'cikis' %}">Çıkış Yap</a>
+    </main>
+</body>
+</html>

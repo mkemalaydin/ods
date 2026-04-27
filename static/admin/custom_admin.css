@@ -1,0 +1,218 @@
+:root {
+    --admin-bg: #f5f7ff;
+    --admin-surface: #ffffff;
+    --admin-primary: #2563eb;
+    --admin-primary-soft: #bfdbfe;
+    --admin-secondary: #1d4ed8;
+    --admin-accent: #0ea5e9;
+    --admin-text: #111827;
+    --admin-muted: #475569;
+    --admin-border: #e2e8f0;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --admin-bg: #0f172a;
+        --admin-surface: #1e293b;
+        --admin-primary: #3b82f6;
+        --admin-primary-soft: #1e40af;
+        --admin-secondary: #1d4ed8;
+        --admin-accent: #06b6d4;
+        --admin-text: #f1f5f9;
+        --admin-muted: #94a3b8;
+        --admin-border: #334155;
+    }
+}
+
+body {
+    background: linear-gradient(180deg, var(--admin-bg) 0%, var(--admin-surface) 100%) !important;
+    transition: background 0.3s ease;
+}
+
+#header {
+    border-bottom: 1px solid var(--admin-border);
+    background: var(--admin-surface);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    transition: all 0.3s ease;
+}
+
+#branding h1, #branding h1 a {
+    color: var(--admin-primary) !important;
+}
+
+#user-tools a {
+    color: var(--admin-muted) !important;
+}
+
+#user-tools a:hover {
+    color: var(--admin-primary) !important;
+}
+
+#content-main {
+    padding: 24px !important;
+}
+
+.module {
+    border-radius: 24px;
+    border: 1px solid var(--admin-border);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+    background: var(--admin-surface);
+    padding: 24px !important;
+    transition: all 0.3s ease;
+}
+
+.inline-group, .form-row, .form-row .field-box {
+    background: var(--admin-surface);
+    border-radius: 18px;
+    border: 1px solid var(--admin-border);
+    margin-bottom: 16px;
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.04);
+    transition: all 0.3s ease;
+}
+
+.field-box label {
+    color: var(--admin-text) !important;
+    font-weight: 600;
+}
+
+.submit-row input, .grp-submit-row input, .submit-row a {
+    border-radius: 14px !important;
+    padding: 12px 22px !important;
+    font-weight: 700;
+}
+
+.submit-row input[type="submit"], .grp-submit-row input[type="submit"] {
+    background: linear-gradient(135deg, var(--admin-primary), var(--admin-accent)) !important;
+    border-color: transparent !important;
+    color: #ffffff !important;
+    box-shadow: 0 16px 32px rgba(37, 99, 235, 0.24);
+}
+
+#content h1, .module h2 {
+    color: var(--admin-primary) !important;
+}
+
+#content-main .module caption {
+    font-size: 1rem;
+    color: var(--admin-muted);
+}
+
+#footer {
+    color: var(--admin-muted) !important;
+}
+
+.button, .button:hover, .button:focus {
+    border-radius: 14px !important;
+    background: var(--admin-primary) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2) !important;
+}
+
+.button:hover {
+    background: var(--admin-secondary) !important;
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3) !important;
+}
+
+.addlink {
+    background: var(--admin-accent) !important;
+    color: #ffffff !important;
+}
+
+.changelink {
+    background: var(--admin-primary) !important;
+    color: #ffffff !important;
+}
+
+.deletelink {
+    background: #dc2626 !important;
+    color: #ffffff !important;
+}
+
+.deletelink:hover {
+    background: #b91c1c !important;
+}
+
+.grp-add-link, .grp-change-link, .grp-delete-link {
+    background: var(--admin-primary) !important;
+    color: #ffffff !important;
+    border-radius: 14px !important;
+    padding: 8px 16px !important;
+    text-decoration: none !important;
+}
+
+.grp-add-link {
+    background: var(--admin-accent) !important;
+}
+
+.grp-delete-link {
+    background: #dc2626 !important;
+}
+
+.grp-delete-link:hover {
+    background: #b91c1c !important;
+}
+
+input[type="button"], input[type="submit"], button {
+    border-radius: 14px !important;
+    background: var(--admin-primary) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+}
+
+input[type="submit"] {
+    background: linear-gradient(135deg, var(--admin-primary), var(--admin-accent)) !important;
+    box-shadow: 0 16px 32px rgba(37, 99, 235, 0.24) !important;
+}
+
+/* Dashboard Cards */
+.dashboard-cards .card {
+    transition: all 0.3s ease;
+}
+
+.dashboard-cards .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(15, 23, 42, 0.15);
+}
+
+/* Sidebar */
+#sidebar {
+    background: var(--admin-surface);
+    border-right: 1px solid var(--admin-border);
+    transition: all 0.3s ease;
+}
+
+#sidebar a {
+    color: var(--admin-text);
+    transition: color 0.3s ease;
+}
+
+#sidebar a:hover {
+    color: var(--admin-primary);
+}
+
+/* Form Inputs */
+.change-form .form-row .field-box input, .change-form .form-row .field-box textarea,
+.change-form .form-row .field-box select {
+    border-radius: 14px !important;
+    border-color: var(--admin-border) !important;
+    box-shadow: none !important;
+    background: var(--admin-surface);
+    color: var(--admin-text);
+    transition: all 0.3s ease;
+}
+
+.change-form .form-row .field-box input:focus, .change-form .form-row .field-box textarea:focus,
+.change-form .form-row .field-box select:focus {
+    border-color: var(--admin-primary) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+.change-form .form-row .field-box input, .change-form .form-row .field-box textarea,
+.change-form .form-row .field-box select {
+    border-radius: 14px !important;
+    border-color: rgba(226, 232, 240, 0.95) !important;
+    box-shadow: none !important;
+}
