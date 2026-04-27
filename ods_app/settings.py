@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-gizli-anahtar')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'  # Temporarily default to True for debugging
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = ['*'] if DEBUG else os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,ods.onrender.com').split(',')
 
 # Security settings for production
