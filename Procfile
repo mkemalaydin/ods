@@ -1,1 +1,1 @@
-web: gunicorn wsgi:application
+web: DJANGO_SETTINGS_MODULE=settings gunicorn wsgi:application
