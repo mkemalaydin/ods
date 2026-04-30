@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ODYS | Hitit Üniversitesi</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Grafikler için Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Excel işlemleri için SheetJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div id="loader" class="overlay"><div class="spinner"></div><p>İşlem Yapılıyor...</p></div>
+
+    <div class="container">
+        <!-- ÖĞRENCİ GİRİŞ -->
+        <div id="loginPage" class="page active">
+            <div class="card login-card">
+                <div class="logo">ODYS</div>
+                <h2>Öğrenci Girişi</h2>
+                <input type="number" id="stdId" placeholder="Öğrenci Numarası">
+                <select id="courseSelect"><option value="">Sınavlar Yükleniyor...</option></select>
+                <button type="button" onclick="studentEntry()" class="btn-primary">Sınava Başla</button>
+                <button type="button" onclick="loadHistory()" class="btn-secondary">Karnelerim</button>
+                <button type="button" onclick="showPage('adminLoginPage')" class="btn-link">Eğitmen Girişi</button>
+            </div>
+        </div>
+
+        <!-- EĞİTMEN GİRİŞ -->
+        <div id="adminLoginPage" class="page">
+            <div class="card login-card">
+                <h2>Eğitmen Girişi</h2>
+                <input type="text" id="admUser" placeholder="Kullanıcı Adı">
+                <input type="password" id="admPass" placeholder="Şifre">
+                <button type="button" onclick="adminLogin()" class="btn-primary">Giriş Yap</button>
+                <button type="button" onclick="showPage('loginPage')" class="btn-back">Geri</button>
+            </div>
+        </div>
+
+        <!-- ADMİN PANELİ -->
+        <div id="adminPage" class="page">
+            <div class="admin-header">
+                <h2>Panel Yönetimi</h2>
+                <div class="admin-nav">
+                    <button type="button" onclick="adminTab('exam', this)" class="tab-btn active">Sınav/Soru Yönetimi</button>
+                    <button type="button" onclick="adminTab('stats', this)" class="tab-btn">Detaylı Analizler</button>
+                    <button type="button" onclick="showPage('loginPage')" class="tab-btn logout">Çıkış</button>
+                </div>
+            </div>
+            
+            <!-- SINAV VE SORU SEKMESİ -->
+            <div id="tab-exam" class="admin-content active-tab">
+                <div class="card">
+                    <h3>Yeni Sınav Tanımla</h3>
+                    <input type="text" id="newExamName" placeholder="Sınav Adı">
+                    <button type="button" onclick="createExam()" class="btn-primary">Sınav Oluştur</button>
+                </div>
+                
+                <div class="card">
+                    <h3>Soru Ekleme İşlemleri</h3>
+                    <select id="targetExamSelect"></select>
+                    
+                    <div style="display: flex; gap: 15px; margin: 15px 0; align-items: center;">
+                        <!-- Manuel Soru Ekleme -->
+                        <div style="flex: 1; display: flex; gap: 10px;">
+                            <input type="number" id="questionCount" placeholder="Soru Sayısı" min="1" style="width: 120px;">
+                            <button type="button" onclick="generateQuestionInputs()" class="btn-secondary">Manuel Ekle</button>
+                        </div>
+                        
+                        <div style="border-left: 2px solid #eee; height: 40px; margin: 0 10px;"></div>
+                        
+                        <!-- Excel ile Soru Yükleme -->
+                        <div style="flex: 1;">
+                            <input type="file" id="excelUpload" accept=".xlsx, .xls" style="display: none;" onchange="handleExcelUpload(event)">
+                            <button type="button" onclick="document.getElementById('excelUpload').click()" class="btn-success" style="width: 100%;">
+                                📊 Excel'den Soru Yükle
+                            </button>
+                            <small style="color: #666; display: block; margin-top: 5px;">Sütunlar: Soru | A | B | C | D | E | Doğru Cevap</small>
+                        </div>
+                    </div>
+
+                    <div id="bulkQuestionContainer"></div>
+                    <button type="button" id="saveAllBtn" onclick="saveBulkQuestions()" class="btn-primary" style="display:none; margin-top:10px;">Soruları Kaydet</button>
+                </div>
+            </div>
+
+            <!-- ANALİZ SEKMESİ -->
+            <div id="tab-stats" class="admin-content">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Detaylı Sınav Raporu</h3>
+                        <button type="button" id="downloadExcelBtn" onclick="downloadResultsExcel()" class="btn-success" style="display: none; width: auto; padding: 10px 20px;">
+                            📥 Sonuçları Excel İndir
+                        </button>
+                    </div>
+                    <select id="statsExamSelect" onchange="loadStatsForExam()">
+                        <option value="">Sınav Seçin</option>
+                    </select>
+                    <div id="statsContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SINAV EKRANI -->
+        <div id="examPage" class="page">
+            <div class="exam-header">
+                <h2 id="currentExamTitle">Sınav</h2>
+                <div id="timer">Süre: 00:00</div>
+            </div>
+            <div id="examArea"></div>
+            <button type="button" onclick="submitExamResults()" class="btn-primary" style="background:#28a745; margin-top:20px;">Sınavı Bitir</button>
+        </div>
+
+        <!-- SONUÇ EKRANI -->
+        <div id="resultPage" class="page">
+            <div class="card">
+                <h2 style="color:#28a745;">Sınav Tamamlandı!</h2>
+                <div id="scoreDisplay" style="font-size: 48px; font-weight: bold;"></div>
+                <div id="resultDetails"></div>
+                <button type="button" onclick="showPage('loginPage')" class="btn-primary">Ana Sayfaya Dön</button>
+            </div>
+        </div>
+
+        <!-- ÖĞRENCİ GEÇMİŞİ -->
+        <div id="historyPage" class="page">
+            <div class="card">
+                <h2>Karne Geçmişi</h2>
+                <div id="historyList"></div>
+                <button type="button" onclick="showPage('loginPage')" class="btn-back">Geri</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
