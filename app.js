@@ -14,6 +14,39 @@ function showPage(id) {
     if (id === 'loginPage' || id === 'adminPage' || id === 'examSelectionPage') loadExamsToSelect();
 }
 
+async function sendPost(payload) {
+    toggleLoading(true);
+    try {
+        const resp = await fetch(API, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+        return await resp.json();
+    } catch (e) {
+        alert("Sistem hatası!");
+        return { success: false };
+    } finally {
+        toggleLoading(false);
+    }
+}
+
+async function registerStudent() {
+    const stdId = document.getElementById('regStdId').value;
+    const name = document.getElementById('regName').value;
+    const password = document.getElementById('regPass').value;
+    if(!stdId || !name || !password) return alert("Tüm alanları doldurun!");
+
+    const res = await sendPost({ action: "registerStudent", studentId: stdId, name, password });
+    if (res.success) {
+        alert("Kayıt başarılı! Şimdi giriş yapabilirsiniz.");
+        showPage('loginPage');
+    } else {
+        alert(res.message || "Kayıt başarısız!");
+    }
+}
+
 function adminTab(tabId, btn) {
     document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active-tab'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
