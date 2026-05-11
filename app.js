@@ -1,16 +1,17 @@
-const API = "https://script.google.com/macros/s/AKfycbycexC1T2xRoK8o0LXvMpzzOkeJiwD-Eay-p7ap7EUvvrJKOFpyEKZokd8WtqbfiILbdQ/exec"; 
+const API = "https://script.google.com/macros/s/AKfycbzsk3rfGTYVYyN8S8uhGnwtkSN_H8EExrOCkyUy5NvC27vAby5B1vEn3IdtgtE_38HcAA/exec"; 
 
 let currentQuestions = [];
 let timerInterval = null;
 let currentGlobalResults = []; 
-let currentGlobalQuestions = []; 
+let currentGlobalQuestions = [];
+let currentStudentId = null; 
 
 function toggleLoading(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
 
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if (id === 'loginPage' || id === 'adminPage') loadExamsToSelect();
+    if (id === 'loginPage' || id === 'adminPage' || id === 'examSelectionPage') loadExamsToSelect();
 }
 
 function adminTab(tabId, btn) {
@@ -20,24 +21,9 @@ function adminTab(tabId, btn) {
     btn.classList.add('active');
 }
 
-async function sendPost(payload) {
-    toggleLoading(true);
-    try {
-        const resp = await fetch(API, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-        });
-        return await resp.json();
-    } catch (e) { alert("Sistem hatası!"); return { success: false }; }
-    finally { toggleLoading(false); }
-}
-
-async function studentEntry() {
-    const stdId = document.getElementById('stdId').value;
+async function startExam() {
     const examId = document.getElementById('courseSelect').value;
-    if(!stdId || !examId) return alert("Eksik bilgi!");
+    if(!examId) return alert("Sınav seçin!");
 
     toggleLoading(true);
     try {
@@ -49,6 +35,21 @@ async function studentEntry() {
         startTimer();
     } catch(e) { alert("Sınav yüklenirken hata oluştu."); }
     finally { toggleLoading(false); }
+}
+
+async function studentLogin() {
+    const stdId = document.getElementById('stdId').value;
+    const password = document.getElementById('stdPass').value;
+    if(!stdId || !password) return alert("Eksik bilgi!");
+
+    const res = await sendPost({ action: "studentLogin", studentId: stdId, password });
+    if (!res.success) {
+        alert("Giriş başarısız! Öğrenci numarası veya şifre yanlış.");
+        return;
+    }
+    currentStudentId = stdId;
+    showPage('examSelectionPage');
+    loadExamsToSelect();
 }
 
 function renderQuestions() {
@@ -76,7 +77,7 @@ function startTimer() {
 
 async function submitExamResults() {
     clearInterval(timerInterval);
-    const stdId = document.getElementById('stdId').value;
+    const stdId = currentStudentId;
     const examId = document.getElementById('courseSelect').value;
     
     let correctCount = 0;
@@ -272,7 +273,7 @@ async function saveBulkQuestions() {
 }
 
 async function loadHistory() {
-    const id = document.getElementById('stdId').value;
+    const id = currentStudentId;
     if(!id) return;
     toggleLoading(true);
     const resp = await fetch(`${API}?action=getStudentHistory&studentId=${id}`);
