@@ -93,7 +93,7 @@ function renderQuestions() {
         q.opts.forEach((opt, idx) => {
             if(opt) {
                 const L = String.fromCharCode(65 + idx);
-                html += `<label><input type="radio" name="q${i}" value="${L}"> ${L}) ${opt}</label><br>`;
+                html += `<label><input type="radio" name="q${i}" value="${L}"><span class="option-text">${L}) ${opt}</span></label>`;
             }
         });
         area.innerHTML += html + `</div>`;

@@ -248,20 +248,20 @@ input:focus, select:focus, textarea:focus {
     background: #fff5f5; 
     border-color: #ffcccc;
 }
-
-/* Tablolar ve Kartlar */
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 20px; 
+.question-block input[type="radio"] {
+    display: none;
 }
-th, td { 
-    padding: 12px; 
-    text-align: left; 
-    border-bottom: 1px solid #ddd; 
+.question-block .option-text {
+    display: inline-block;
+    width: 100%;
 }
-th { 
-    background: var(--light-gray); 
+.question-block input[type="radio"]:checked + .option-text {
+    background: #fdecea;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: var(--bordo);
+    font-weight: 600;
+}
     font-weight: bold; 
     color: var(--dark-gray); 
 }
